@@ -1,16 +1,17 @@
 require './Chess_piece'
 class ChessBoard
-  attr_accessor :board
+  attr_accessor :board, :kings, :black_king, :white_king
 
   def initialize
-    @board = Array.new(8) { |row| Array.new(8) {nil} }
+    @board = Array.new(8) { |row| Array.new(8) { nil } }
   end
 
   def populate_board
-    self[[7,0]] = Queen.new(self,[7,0], :w)
-    self[[6,1]] = Pawn.new(self,[6,1], :w)
-    self[[7,1]] = Pawn.new(self,[7,1], :b)
-    self[[5,2]] = Pawn.new(self,[5,2], :b)
+    Queen.new(self,[7,0], :w)
+    @black_king = King.new(self, [0,0], :b)
+    @white_king = King.new(self, [7,7], :w)
+    @kings = {:b => self.black_king, :w => self.white_king}
+    Castle.new(self, [7,1], :w)
     nil
   end
 
@@ -24,6 +25,26 @@ class ChessBoard
     board[row][col]
   end
 
+  #use as a shortcut to break from checkmate if king can escape
+  def get_danger_zone(color)
+    danger_zone = []
+    board.flatten.compact.each do |piece|
+        danger_zone += piece.possible_moves if piece.player != color
+    end
+    danger_zone
+  end
 
+  def checked?(color)
+    get_danger_zone(color).include? (kings[color].pos)
+  end
+
+  def check_mated?(color)
+    dz = get_danger_zone(color)
+    return true if kings[color].possible_moves.all? { |move| dz.include? move }
+
+    #see if king can be protected by other player
+    false
+  end
 
 end
+#load './Chess_board.rb'; game = ChessBoard.new; game.populate_board; game.board

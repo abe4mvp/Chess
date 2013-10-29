@@ -11,6 +11,7 @@ class Piece
   COMP_DELTA = CARDINAL_DELTA + DIAG_DELTA
   def initialize(board = nil, pos, player)# player = :b/:w
     @board, @pos, @player = board, pos, player
+    board[pos] = self
   end
 
   def on_board?(move)
@@ -18,7 +19,7 @@ class Piece
   end
 
   def inspect
-    p self.class.to_s[0..1]
+    self.class.to_s[0..2]
   end
 
   # def check_spot(move)
@@ -30,7 +31,7 @@ end
 
 class SlidingPiece < Piece
 
-  def possible_slides(deltas)
+  def possible_slides(deltas) #refactor if possible
     moves = []
     deltas.each do |delta|
       potential_move = [(pos[0]+ delta[0]),(pos[1] + delta[1])]
@@ -146,3 +147,5 @@ class King < SteppingPiece
   end
 
 end
+
+
