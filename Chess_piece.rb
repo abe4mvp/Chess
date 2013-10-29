@@ -22,9 +22,8 @@ class Piece
     self.class.to_s[0..2]
   end
 
-  # def check_spot(move)
-#     self.board[move[0]][move[1]]
-#   end
+
+
 end
 
 
@@ -52,23 +51,6 @@ class SlidingPiece < Piece
 
     moves
   end
-
-
-
-  # increments = (-7..7).to_a*2
-  # increments.permutation(2).to_a.keep_if {|x, y| x.abs == y.abs }.uniq
-
-
-  # def diagonal_moves
- #    moves = []
- #    (1..7).each do |increment|
- #      moves << [(pos[0] + increment),(pos[1]+ increment)]
- #      moves << [(pos[0] - increment),(pos[1] + increment)]
- #      moves << [(pos[0] + increment),(pos[1] - increment)]
- #      moves << [(pos[0] - increment),(pos[1] - increment)]
- #    end
- #    moves.keep_if { |move| on_board?(move) }
- #  end
 
 end
 
