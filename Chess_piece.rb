@@ -27,27 +27,6 @@ end
 
 class SlidingPiece < Piece
   private
-  # def possible_slides(deltas) #NEED to refactor
-  #   moves = []
-  #   deltas.each do |delta|
-  #
-  #     potential_move = [(pos[0]+ delta[0]),(pos[1] + delta[1])]
-  #     next unless on_board?(potential_move)
-  #     target = board[potential_move]
-  #     #potential move format [x,y]
-  #
-  #     while on_board?(potential_move) && (target.nil? || target.color != self.color)
-  #       moves << potential_move.dup
-  #       break if (target != nil && target.color != self.color)
-  #       potential_move[0] += delta[0]
-  #       potential_move[1] += delta[1]
-  #       target = board[potential_move] if on_board?(potential_move)
-  #       #debugger
-  #     end
-  #   end
-  #
-  #   moves
-  # end
   def possible_slides(deltas) #NEED to refactor
     moves = []
     deltas.each do |delta|
