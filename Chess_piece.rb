@@ -4,13 +4,14 @@
 #
 
 class Piece
-  attr_accessor :board, :pos, :player
+  attr_accessor :board, :pos, :color
   BOARD_RANGE = (0..7).to_a
   CARDINAL_DELTA = [[0,1], [1,0], [-1,0], [0,-1]]
   DIAG_DELTA = [[1,1], [-1,-1], [1,-1], [-1,1]]
   COMP_DELTA = CARDINAL_DELTA + DIAG_DELTA
-  def initialize(board = nil, pos, player)# player = :b/:w
-    @board, @pos, @player = board, pos, player
+
+  def initialize(board = nil, pos, color)# color = :b/:w
+    @board, @pos, @color = board, pos, color
     board[pos] = self
   end
 
@@ -22,27 +23,26 @@ class Piece
     self.class.to_s[0..2]
   end
 
-
-
 end
-
-
 
 class SlidingPiece < Piece
 
   def possible_slides(deltas) #refactor if possible
     moves = []
     deltas.each do |delta|
+
       potential_move = [(pos[0]+ delta[0]),(pos[1] + delta[1])]
       next unless on_board?(potential_move)
       target = board[potential_move]
       #potential move format [x,y]
-      while (target.nil? || target.player != self.player) && on_board?(potential_move)
+
+      while (target.nil? || target.color != self.color) && on_board?(potential_move)
         moves << potential_move.dup
-        if (target != nil && target.player != self.player)
+        if (target != nil && target.color != self.color)
           puts "DAMNIT!"
           break
         end
+
         potential_move[0] += delta[0]
         potential_move[1] += delta[1]
         target = board[potential_move]
@@ -75,8 +75,8 @@ end
 class Pawn < Piece
   attr_accessor :moved
 
-  def initialize(board, pos, player)
-    super(board, pos, player)
+  def initialize(board, pos, color)
+    super(board, pos, color)
     @moved = false # move to main class if castling
   end
 
@@ -85,17 +85,17 @@ class Pawn < Piece
   end
 
   def regular_move
-    player == :w ? [[(pos[0] + 1),(pos[1])]] : [[(pos[0] - 1),(pos[1])]]
+    color == :w ? [[(pos[0] + 1),(pos[1])]] : [[(pos[0] - 1),(pos[1])]]
   end
 
   def double_move
     return [] if moved
     moved = true
-    player == :w ? [[(pos[0] + 2),(pos[1])]] : [[(pos[0] - 2),(pos[1])]]
+    color == :w ? [[(pos[0] + 2),(pos[1])]] : [[(pos[0] - 2),(pos[1])]]
   end
 
   def kill_move
-    if player == :w
+    if color == :w
       [[(pos[0]-1),(pos[1]+1)],[(pos[0]-1),(pos[1]-1)]] #white pawn
     else
       [[(pos[0]+1),(pos[1]+1)],[(pos[0]+1),(pos[1]-1)]] #black pawn
