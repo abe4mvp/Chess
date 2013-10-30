@@ -13,7 +13,7 @@ class ChessBoard
       piece.new(self, [7, index], :w)
       #Pawn.new(self, [6, index], :w)
       piece.new(self, [0, index], :b)
-      #Pawn.new(self, [1, index], :b)
+      Pawn.new(self, [1, index], :b)
     end
     @kings = {:b => self.board[0][5], :w => self.board[7][5]}
     self.show
@@ -38,9 +38,12 @@ class ChessBoard
   end
 
   def show
-    puts "---------------------------------"
-    board.each do |row|
-      out = "|"
+    system("clear")
+    puts "\n\n\n\n\n\n"
+    puts "\t-- 0 - 1 - 2 - 3 - 4 - 5 - 6 - 7 --"
+    puts "\t-----------------------------------"
+    board.each_with_index do |row,index|
+      out = "\t#{index}|"
       row.each do |item|
         if item.nil?
           out += "   |"
@@ -49,8 +52,9 @@ class ChessBoard
         end
       end
       puts out
-      puts "-"*out.length
+      puts "\t"+("-"*(out.length))[0..-2]
     end
+    puts "\n\n"
     return nil
   end
 

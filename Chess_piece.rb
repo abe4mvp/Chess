@@ -87,6 +87,7 @@ end
 
 class Pawn < Piece
   attr_accessor :moved
+  KILLDELTA = [[0,-1],[0,1]]
 
   def initialize(board, pos, color)
     super(board, pos, color)
@@ -119,6 +120,15 @@ class Pawn < Piece
     #   end #black pawn
     # end
     []
+  end
+
+  def kill_move
+    kill_targets = color == :w ? [[-1,1],[-1,-1]] : [[1,1],[1,-1]]
+    kill_targets.map!.with_index {|target| target.add_delta(pos)}
+    kill_targets.keep_if do |square|
+      (board[square] != nil) && (board[square].color != color)
+    end
+
   end
 
 end
