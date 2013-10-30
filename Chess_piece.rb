@@ -41,11 +41,8 @@ class SlidingPiece < Piece
 
       while (target.nil? || target.color != self.color) && on_board?(potential_move)
         moves << potential_move.dup
-        if (target != nil && target.color != self.color)
-          puts "DAMNIT!"
-          break
-        end
-
+        break if (target != nil && target.color != self.color)
+        
         potential_move[0] += delta[0]
         potential_move[1] += delta[1]
         target = board[potential_move]

@@ -26,13 +26,14 @@ class ChessBoard
   end
 
   def move(start_pos,end_pos) # assumes color will not try to move opponents piece
-  piece = find_piece_at(start_pos)
-  if piece.possible_moves.include?(end_pos)# && valid_move?
-    piece.pos = end_pos
-    self[end_pos] = piece
-    self[start_pos] = nil
-  else
-    raise "This piece can't move here!" 
+    piece = find_piece_at(start_pos)
+    if piece.possible_moves.include?(end_pos)# && valid_move?
+      piece.pos = end_pos
+      self[end_pos] = piece
+      self[start_pos] = nil
+    else
+      raise "This piece can't move here!" 
+    end
   end
 
   #use as a shortcut to break from checkmate if king can escape
@@ -52,34 +53,35 @@ class ChessBoard
 
 
   def checked?(color)
-    get_danger_zone(color).include? (kings[color].pos)
+    enemy_strike_zone(color).include? (kings[color].pos)
   end
 
-  def check_mated?(color)
-    dz = get_danger_zone(color)
-    return true if kings[color].possible_moves.all? { |move| dz.include? move }
+  def check_mated?(color) #cant use as early exit as predicted
+    #first see if king can be protected by other color
 
-    #see if king can be protected by other color
+    strike_zone = enemy_strike_zone(color)
+    return true if kings[color].possible_moves.all? { |move| strike_zone.include? move }
+
+    
     false
   end
 
   private
-  def get_danger_zone(color)
-    danger_zone = []
-    board.flatten.compact.each do |piece| #replace with active_piece_list
-        danger_zone += piece.possible_moves if piece.color != color
+  def enemy_strike_zone(color) 
+    strike_zone = []
+    enemy_color = color == :w ? :b : :w
+
+    all_active_pieces.each do |piece| 
+      strike_zone += piece.possible_moves if piece.color == enemy_color
     end
-    danger_zone
-  end
 
-
+    strike_zone
   end
 
   def find_piece_at(target_pos) #returns a list of active pieces if none found
     all_active_pieces.each { |piece| return piece if piece.pos == target_pos}
     raise "There is no piece there!"
   end
-
 end
 
 #unless $PROGRAM_NAME == __File__
