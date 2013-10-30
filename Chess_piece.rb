@@ -97,9 +97,9 @@ class Pawn < Piece
 
   def kill_move #need to specify that a enemy is in kill pos
     if color == :w
-      [[(pos[0]-1),(pos[1]+1)],[(pos[0]-1),(pos[1]-1)]] #white pawn
+      [[(pos[0]-1),(pos[1]+1)],[(pos[0]-1),(pos[1]-1)]].keep_if{|target| target.class != nil && target.color != self.color} #white pawn
     else
-      [[(pos[0]+1),(pos[1]+1)],[(pos[0]+1),(pos[1]-1)]] #black pawn
+      [[(pos[0]+1),(pos[1]+1)],[(pos[0]+1),(pos[1]-1)]].keep_if{|target| target.class != nil && target.color != self.color} #black pawn
     end
   end
 

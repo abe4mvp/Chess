@@ -6,14 +6,49 @@ class ChessBoard
     @board = Array.new(8) { |row| Array.new(8) { nil } }
   end
 
+  def setup
+    piece_order = [Castle,Knight,Bishop,Queen,King,Bishop,Knight,Castle]
+    piece_order.each_with_index do |piece, index|
+      piece.new(self, [7, index], :w)
+      Pawn.new(self, [6, index], :w)
+      piece.new(self, [0, index], :b)
+      Pawn.new(self, [1, index], :b)
+    end
+    @kings = {:b => board[0,5], :w => board[7,5]}
+    self.show
+  end
+
   def populate_board
-    Queen.new(self,[7,0], :w)
+    # Queen.new(self,[7,0], :w)
+
     @black_king = King.new(self, [0,0], :b)
+    @black_pawn1 = Pawn.new(self, [1,0], :b)
+    @black_pawn1 = Pawn.new(self, [1,1], :b)
+    @white_pawn1 = Pawn.new(self, [1,1], :w)
     @white_king = King.new(self, [7,7], :w)
     @kings = {:b => self.black_king, :w => self.white_king}
     Castle.new(self, [7,1], :w)
     nil
   end
+
+  def show
+    puts
+    board.each do |row|
+      out = "|"
+      row.each do |item|
+        if item.nil?
+          out += "   |"
+        else
+          out += item.class.to_s[0..1]+item.color.to_s.upcase+ "|"
+        end
+      end
+      puts out
+      puts "-"*out.length
+    end
+  end
+
+
+
 
   def []=(pos, value)
     row, col = pos
@@ -26,6 +61,7 @@ class ChessBoard
   end
 
   def move(start_pos,end_pos) # assumes color will not try to move opponents piece
+    p start_pos
     piece = board[start_pos[0]][start_pos[1]]#refactor this line
     if piece.possible_moves.include?(end_pos) && !invalid_move?(piece, end_pos)
       piece.pos = end_pos
