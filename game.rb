@@ -4,7 +4,7 @@ class ChessGame
   attr_accessor :board
   def initialize
     @board = ChessBoard.new
-    board.populate_board
+    return nil
   end
 
   def game_loop

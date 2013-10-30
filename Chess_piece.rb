@@ -15,11 +15,8 @@ class Piece
     board[pos] = self
   end
 
-  def inspect
-    self.class.to_s[0..2]
-  end
 
-  #private
+  private
   def on_board?(move)
     move.all? { |coord| BOARD_RANGE.include?(coord) }
   end
@@ -30,25 +27,41 @@ end
 
 class SlidingPiece < Piece
   private
+  # def possible_slides(deltas) #NEED to refactor
+  #   moves = []
+  #   deltas.each do |delta|
+  #
+  #     potential_move = [(pos[0]+ delta[0]),(pos[1] + delta[1])]
+  #     next unless on_board?(potential_move)
+  #     target = board[potential_move]
+  #     #potential move format [x,y]
+  #
+  #     while on_board?(potential_move) && (target.nil? || target.color != self.color)
+  #       moves << potential_move.dup
+  #       break if (target != nil && target.color != self.color)
+  #       potential_move[0] += delta[0]
+  #       potential_move[1] += delta[1]
+  #       target = board[potential_move] if on_board?(potential_move)
+  #       #debugger
+  #     end
+  #   end
+  #
+  #   moves
+  # end
   def possible_slides(deltas) #NEED to refactor
     moves = []
     deltas.each do |delta|
-
-      potential_move = [(pos[0]+ delta[0]),(pos[1] + delta[1])]
+      potential_move = pos.add_delta(delta)
       next unless on_board?(potential_move)
       target = board[potential_move]
-      #potential move format [x,y]
 
       while on_board?(potential_move) && (target.nil? || target.color != self.color)
         moves << potential_move.dup
         break if (target != nil && target.color != self.color)
-        potential_move[0] += delta[0]
-        potential_move[1] += delta[1]
+        potential_move.add_delta!(delta)
         target = board[potential_move] if on_board?(potential_move)
-        #debugger
       end
     end
-
     moves
   end
 
@@ -86,21 +99,26 @@ class Pawn < Piece
 
   private
   def regular_move
-    color == :w ? [[(pos[0] + 1),(pos[1])]] : [[(pos[0] - 1),(pos[1])]]
+    color == :w ? [[(pos[0] - 1),(pos[1])]] : [[(pos[0] + 1),(pos[1])]]
   end
 
-  def double_move
+  def double_move #prevent if blocked
     return [] if moved
     moved = true
-    color == :w ? [[(pos[0] + 2),(pos[1])]] : [[(pos[0] - 2),(pos[1])]]
+    color == :w ? [[(pos[0] - 2),(pos[1])]] : [[(pos[0] + 2),(pos[1])]]
   end
 
   def kill_move #need to specify that a enemy is in kill pos
-    if color == :w
-      [[(pos[0]-1),(pos[1]+1)],[(pos[0]-1),(pos[1]-1)]].keep_if{|target| target.class != nil && target.color != self.color} #white pawn
-    else
-      [[(pos[0]+1),(pos[1]+1)],[(pos[0]+1),(pos[1]-1)]].keep_if{|target| target.class != nil && target.color != self.color} #black pawn
-    end
+    # if color == :w
+    #   [[(pos[0]-1),(pos[1]+1)],[(pos[0]-1),(pos[1]-1)]].keep_if do |target|
+    #     (board[target].class != nil) && (board[target].color == :b)
+    #   end #white pawn
+    # else
+    #   [[(pos[0]+1),(pos[1]+1)],[(pos[0]+1),(pos[1]-1)]].keep_if do |target|
+    #     (board[target].class != nil) && (board[target].color == :w)
+    #   end #black pawn
+    # end
+    []
   end
 
 end
@@ -129,6 +147,18 @@ class King < SteppingPiece
     in_range_moves(COMP_DELTA)
   end
 
+end
+
+class Array
+
+  def add_delta(delta, &prc)
+    self.dup.add_delta!(delta, &prc)
+  end
+
+  def add_delta!(delta, &prc)
+    prc = Proc.new{ |x,y| x + y } unless prc
+    self.each_with_index { |item,index| self[index] = prc.call(item,delta[index]) }
+  end
 end
 
 

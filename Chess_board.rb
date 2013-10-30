@@ -4,18 +4,24 @@ class ChessBoard
 
   def initialize
     @board = Array.new(8) { |row| Array.new(8) { nil } }
+    setup
   end
 
   def setup
     piece_order = [Castle,Knight,Bishop,Queen,King,Bishop,Knight,Castle]
     piece_order.each_with_index do |piece, index|
       piece.new(self, [7, index], :w)
-      Pawn.new(self, [6, index], :w)
+      #Pawn.new(self, [6, index], :w)
       piece.new(self, [0, index], :b)
-      Pawn.new(self, [1, index], :b)
+      #Pawn.new(self, [1, index], :b)
     end
-    @kings = {:b => board[0,5], :w => board[7,5]}
+    @kings = {:b => self.board[0][5], :w => self.board[7][5]}
     self.show
+    nil
+  end
+
+  def inspect
+    return ''
   end
 
   def populate_board
@@ -32,7 +38,7 @@ class ChessBoard
   end
 
   def show
-    puts
+    puts "---------------------------------"
     board.each do |row|
       out = "|"
       row.each do |item|
@@ -45,6 +51,7 @@ class ChessBoard
       puts out
       puts "-"*out.length
     end
+    return nil
   end
 
 
@@ -61,7 +68,6 @@ class ChessBoard
   end
 
   def move(start_pos,end_pos) # assumes color will not try to move opponents piece
-    p start_pos
     piece = board[start_pos[0]][start_pos[1]]#refactor this line
     if piece.possible_moves.include?(end_pos) && !invalid_move?(piece, end_pos)
       piece.pos = end_pos
@@ -104,7 +110,6 @@ class ChessBoard
 
     enemy = color == :w ? :b : :w
     pieces = all_active_pieces(color)
-    p pieces
     pieces.each do |piece|
       return false unless piece.possible_moves.all? { |move| invalid_move?(piece, move)  }
     end
