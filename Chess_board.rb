@@ -25,14 +25,18 @@ class ChessBoard
     board[row][col]
   end
 
-  #use as a shortcut to break from checkmate if king can escape
-  def get_danger_zone(color)
-    danger_zone = []
-    board.flatten.compact.each do |piece| #replace with active_piece_list
-        danger_zone += piece.possible_moves if piece.color != color
-    end
-    danger_zone
+  def move(start_pos,end_pos) # assumes color will not try to move opponents piece
+  piece = find_piece_at(start_pos)
+  if piece.possible_moves.include?(end_pos)# && valid_move?
+    piece.pos = end_pos
+    self[end_pos] = piece
+    self[start_pos] = nil
+  else
+    raise "This piece can't move here!" 
   end
+
+  #use as a shortcut to break from checkmate if king can escape
+
 
   def all_active_pieces
     board.flatten.compact
@@ -59,15 +63,15 @@ class ChessBoard
     false
   end
 
-  def move(start_pos,end_pos) # assumes color will not try to move opponents piece
-    piece = find_piece_at(start_pos)
-    if piece.possible_moves.include?(end_pos)# && valid_move?
-      piece.pos = end_pos
-      self[end_pos] = piece
-      self[start_pos] = nil
-    else
-      raise "This piece can't move here!" 
+  private
+  def get_danger_zone(color)
+    danger_zone = []
+    board.flatten.compact.each do |piece| #replace with active_piece_list
+        danger_zone += piece.possible_moves if piece.color != color
     end
+    danger_zone
+  end
+
 
   end
 

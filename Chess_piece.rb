@@ -15,18 +15,21 @@ class Piece
     board[pos] = self
   end
 
-  def on_board?(move)
-    move.all? { |coord| BOARD_RANGE.include?(coord) }
-  end
-
   def inspect
     self.class.to_s[0..2]
   end
 
+  #private
+  def on_board?(move)
+    move.all? { |coord| BOARD_RANGE.include?(coord) }
+  end
+
+  
+
 end
 
 class SlidingPiece < Piece
-
+  private
   def possible_slides(deltas) #refactor if possible
     moves = []
     deltas.each do |delta|
@@ -84,6 +87,7 @@ class Pawn < Piece
     regular_move + double_move + kill_move
   end
 
+  private
   def regular_move
     color == :w ? [[(pos[0] + 1),(pos[1])]] : [[(pos[0] - 1),(pos[1])]]
   end
@@ -94,7 +98,7 @@ class Pawn < Piece
     color == :w ? [[(pos[0] + 2),(pos[1])]] : [[(pos[0] - 2),(pos[1])]]
   end
 
-  def kill_move
+  def kill_move #need to specify that a enemy is in kill pos
     if color == :w
       [[(pos[0]-1),(pos[1]+1)],[(pos[0]-1),(pos[1]-1)]] #white pawn
     else
@@ -105,6 +109,7 @@ class Pawn < Piece
 end
 
 class SteppingPiece < Piece
+  private
   def in_range_moves(deltas) #possibly move to main class if needed
     deltas.map { |x, y| [self.pos[0]+x, self.pos[1]+y] }.keep_if do |move|
       on_board?(move)
@@ -123,7 +128,6 @@ class Knight < SteppingPiece
 end
 
 class King < SteppingPiece
-
   def possible_moves
     in_range_moves(COMP_DELTA)
   end
